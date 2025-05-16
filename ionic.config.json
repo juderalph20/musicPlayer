@@ -1,0 +1,7 @@
+{
+  "name": "musicPlayer",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
