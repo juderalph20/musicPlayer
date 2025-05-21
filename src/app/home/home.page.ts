@@ -242,10 +242,36 @@ export class HomePage {
     this.seekTo(value);
   }
 
-  goHome() {
-    this.viewingPlaylist = false;
-    this.showAddPlaylist = false;
-    this.showPlaylist = false;
-    this.fetchDeezerCharts();
+ goHome() {
+  this.viewingPlaylist = false;
+  this.showAddPlaylist = false;
+  this.showPlaylist = false;
+  this.showSearch = false;
+  this.newPlaylistName = '';
+  this.searchQuery = '';
+
+  // ✅ Clear searched tracks from current playlist
+  if (this.playlists[this.selectedPlaylistIndex]) {
+    this.playlists[this.selectedPlaylistIndex].tracks = [];
+    this.savePlaylists(); // optional, if you want to persist it
   }
+
+  this.fetchDeezerCharts(); // refresh top content
+}
+addTrackToPlaylist(track: any, playlistIndex: number = this.selectedPlaylistIndex) {
+  if (!this.playlists[playlistIndex]) return;
+
+  const isAlreadyAdded = this.playlists[playlistIndex].tracks.some(
+    t => t.title === track.title && t.artist.name === track.artist.name
+  );
+
+  if (isAlreadyAdded) {
+    alert('Track already exists in this playlist.');
+    return;
+  }
+
+  this.playlists[playlistIndex].tracks.push(track);
+  this.savePlaylists();
+  alert(`"${track.title}" added to "${this.playlists[playlistIndex].name}"`);
+}
 }

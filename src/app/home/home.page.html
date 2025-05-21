@@ -3,8 +3,8 @@
     <ion-title>Music Player</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goHome()">
-  <ion-icon name="home-outline"></ion-icon>
-</ion-button>
+        <ion-icon name="home-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -45,10 +45,10 @@
 </div>
 
 <!-- Recommended Tracks -->
-<div *ngIf="topTracks.length && !viewingPlaylist" class="homepage-section">
+<div *ngIf="topTracks.length && !viewingPlaylist && !showSearch" class="homepage-section">
   <h3>🎧 Recommended Tracks</h3>
   <ion-list>
-    <ion-item *ngFor="let track of topTracks" (click)="playTrack(track.preview, track)">
+    <ion-item *ngFor="let track of topTracks">
       <ion-thumbnail slot="start">
         <img [src]="track.album.cover_small" />
       </ion-thumbnail>
@@ -56,32 +56,48 @@
         <h2>{{ track.title }}</h2>
         <p>{{ track.artist.name }}</p>
       </ion-label>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" (click)="playTrack(track.preview, track)">
+          <ion-icon name="play-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" (click)="addTrackToPlaylist(track)">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
-</div>
-
-<!-- Floating Action Buttons Column (bottom right) -->
-<div class="fab-actions-column" *ngIf="!showSearch">
-  <div class="fab-add-playlist" (click)="showAddPlaylist = true">
-    <ion-icon name="add-circle"></ion-icon>
-  </div>
-  <div class="fab-my-playlist" (click)="showPlaylist = !showPlaylist">
-    <ion-icon name="musical-notes"></ion-icon>
-  </div>
-  <div class="fab-search" (click)="showSearch = !showSearch">
-    <ion-icon name="search-outline"></ion-icon>
-  </div>
 </div>
 
 <ion-content class="ion-padding">
 
   <!-- Search Bar (show/hide) -->
-  <div *ngIf="showSearch" class="search-bar-popover">
+  <div *ngIf="showSearch" class="search-bar-wrapper">
     <ion-item>
       <ion-input [(ngModel)]="searchQuery" placeholder="Search music..."></ion-input>
       <ion-button (click)="searchDeezer()">Search</ion-button>
     </ion-item>
   </div>
+
+  <!-- Search Results -->
+  <ion-list *ngIf="showSearch && tracks.length > 0">
+    <ion-item *ngFor="let track of tracks">
+      <ion-thumbnail slot="start">
+        <img [src]="track.album?.cover_small || track.picture || 'assets/default-cover.png'" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ track.title }}</h2>
+        <p>{{ track.artist.name }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" (click)="playTrack(track.preview, track)">
+          <ion-icon name="play-outline"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" (click)="addTrackToPlaylist(track)">
+          <ion-icon name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
 
   <!-- Add Playlist Popover -->
   <div *ngIf="showAddPlaylist" class="add-playlist-popover">
@@ -110,26 +126,23 @@
   </div>
 
   <!-- Add Song Button (only when a playlist is selected and not on homepage) -->
-  <div
-  *ngIf="viewingPlaylist && playlists.length > 0 && selectedPlaylistIndex !== null"
-  class="add-song-btn"
->
-  <input
-    type="file"
-    #fileInput
-    accept="audio/*"
-    multiple
-    (change)="onFileSelected($event)"
-    hidden
-  />
-  <ion-button fill="solid" color="success" (click)="fileInput.click()">
-    <ion-icon name="musical-note-outline" slot="start"></ion-icon>
-    Add Song
-  </ion-button>
-</div>
+  <div *ngIf="viewingPlaylist && playlists.length > 0 && selectedPlaylistIndex !== null" class="add-song-btn">
+    <input
+      type="file"
+      #fileInput
+      accept="audio/*"
+      multiple
+      (change)="onFileSelected($event)"
+      hidden
+    />
+    <ion-button fill="solid" color="success" (click)="fileInput.click()">
+      <ion-icon name="musical-note-outline" slot="start"></ion-icon>
+      Upload Mp3 Files
+    </ion-button>
+  </div>
 
   <!-- Track List -->
-  <ion-list *ngIf="tracks.length > 0">
+  <ion-list *ngIf="tracks.length > 0 && viewingPlaylist">
     <ion-item *ngFor="let track of tracks">
       <ion-label>
         <h2>{{ track.title }}</h2>
@@ -142,6 +155,19 @@
   </ion-list>
 
 </ion-content>
+
+<!-- Floating Action Buttons Column (bottom right) -->
+<div class="fab-actions-column" *ngIf="!showSearch">
+  <div class="fab-add-playlist" (click)="showAddPlaylist = true">
+    <ion-icon name="add-circle"></ion-icon>
+  </div>
+  <div class="fab-my-playlist" (click)="showPlaylist = !showPlaylist">
+    <ion-icon name="musical-notes"></ion-icon>
+  </div>
+  <div class="fab-search" (click)="showSearch = !showSearch">
+    <ion-icon name="search-outline"></ion-icon>
+  </div>
+</div>
 
 <!-- Player Bar (Sticky Footer) -->
 <ion-footer *ngIf="currentTrackObj">
