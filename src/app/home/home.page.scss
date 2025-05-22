@@ -247,5 +247,18 @@ ion-item {
   margin-bottom: 6px;
   background: #333;
 }
-
+.close-player-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.8em;
+  z-index: 10;
+  cursor: pointer;
+}
+.player-bar {
+  position: relative;
+}
 

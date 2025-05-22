@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'; //new
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -242,36 +242,44 @@ export class HomePage {
     this.seekTo(value);
   }
 
- goHome() {
-  this.viewingPlaylist = false;
-  this.showAddPlaylist = false;
-  this.showPlaylist = false;
-  this.showSearch = false;
-  this.newPlaylistName = '';
-  this.searchQuery = '';
+  goHome() {
+    this.viewingPlaylist = false;
+    this.showAddPlaylist = false;
+    this.showPlaylist = false;
+    this.showSearch = false;
+    this.newPlaylistName = '';
+    this.searchQuery = '';
 
-  // ✅ Clear searched tracks from current playlist
-  if (this.playlists[this.selectedPlaylistIndex]) {
-    this.playlists[this.selectedPlaylistIndex].tracks = [];
-    this.savePlaylists(); // optional, if you want to persist it
+    // ✅ Clear searched tracks from current playlist
+    if (this.playlists[this.selectedPlaylistIndex]) {
+      this.playlists[this.selectedPlaylistIndex].tracks = [];
+      this.savePlaylists(); // optional, if you want to persist it
+    }
+
+    this.fetchDeezerCharts(); // refresh top content
   }
 
-  this.fetchDeezerCharts(); // refresh top content
-}
-addTrackToPlaylist(track: any, playlistIndex: number = this.selectedPlaylistIndex) {
-  if (!this.playlists[playlistIndex]) return;
+  addTrackToPlaylist(track: any, playlistIndex: number = this.selectedPlaylistIndex) {
+    if (!this.playlists[playlistIndex]) return;
 
-  const isAlreadyAdded = this.playlists[playlistIndex].tracks.some(
-    t => t.title === track.title && t.artist.name === track.artist.name
-  );
+    const isAlreadyAdded = this.playlists[playlistIndex].tracks.some(
+      t => t.title === track.title && t.artist.name === track.artist.name
+    );
 
-  if (isAlreadyAdded) {
-    alert('Track already exists in this playlist.');
-    return;
+    if (isAlreadyAdded) {
+      alert('Track already exists in this playlist.');
+      return;
+    }
+
+    this.playlists[playlistIndex].tracks.push(track);
+    this.savePlaylists();
+    alert(`"${track.title}" added to "${this.playlists[playlistIndex].name}"`);
   }
 
-  this.playlists[playlistIndex].tracks.push(track);
-  this.savePlaylists();
-  alert(`"${track.title}" added to "${this.playlists[playlistIndex].name}"`);
-}
+  // --- Add this method for the close (X) button ---
+  closeCurrentTrack() {
+    this.pauseTrack();
+    this.currentTrackObj = null;
+    this.currentTrack = '';
+  }
 }

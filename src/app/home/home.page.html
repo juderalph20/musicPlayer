@@ -172,6 +172,10 @@
 <!-- Player Bar (Sticky Footer) -->
 <ion-footer *ngIf="currentTrackObj">
   <div class="player-bar">
+    <!-- Close Button -->
+    <button class="close-player-btn" (click)="closeCurrentTrack()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
     <div class="player-info">
       <img [src]="currentTrackObj.album?.cover || currentTrackObj.picture || 'assets/default-cover.png'" alt="cover" class="cover-img" />
       <div>
